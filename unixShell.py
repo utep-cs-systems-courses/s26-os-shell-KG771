@@ -10,6 +10,7 @@ def checkValidCommand(command):
         return command
     else:
         print(command + ": command not found")
+
         
  
 childPID = fork()
