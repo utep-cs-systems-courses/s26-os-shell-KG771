@@ -15,7 +15,8 @@ def checkValidCommand(command):
 
         
  
-childPID = fork()
+childPID = os.fork()
+PS1 = os.environ.get("PS1")
 
 while True:
     if PS1:
