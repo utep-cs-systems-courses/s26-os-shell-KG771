@@ -20,6 +20,6 @@ PS1 = os.environ.get("PS1")
 
 while True:
     if PS1:
-        print("PS1" + command)
+        print("PS1 " + command)
     else:
         print("$ " + command)
