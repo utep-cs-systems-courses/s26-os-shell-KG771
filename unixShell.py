@@ -5,8 +5,6 @@ import sys
 import re
 
 
-command = ''
-
 def verifyCommand(command):
     return command
 
