@@ -17,12 +17,14 @@ while True:
     if userInput == '':
         continue
 
+    #handles built-in command exit
     if userInput == 'exit':
         sys.exit(0)
+    #handles built-in command cd
     elif userInput.startswith('cd'):
         #retrieves path
         path = userInput.split()
-        #
+        #continue if no path was specified
         if len(path) < 2:
             continue
         else:
@@ -30,13 +32,17 @@ while True:
                 #changes directory to new path
                 os.chdir(path[1])
             except :
+                #error message when path is invalid
                 print("cd: no such file or directory: " + path[1])
+    
     elif '>' in userInput:
         #redirection
         PID = os.fork()
+    
     elif '<' in userInput:
         #redirection
         PID = os.fork()
+    
     elif '|' in userInput:
         #pipe
         PID = os.fork()
