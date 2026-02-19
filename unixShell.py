@@ -5,8 +5,6 @@ import sys
 import re
 
 
-def verifyCommand(command):
-    return command
 
 while True:
     commandPrompt = os.environ.get("PS1", "$")
@@ -15,14 +13,24 @@ while True:
     except EOFError:
         sys.exit(0)
 
-    #handles case where user enters without input
+    #handles case where user 'enters' without input
     if userInput == '':
         continue
 
     if userInput == 'exit':
         sys.exit(0)
     elif userInput.startswith('cd'):
-        os.chdir()
+        #retrieves path
+        path = userInput.split()
+        #
+        if len(path) < 2:
+            continue
+        else:
+            try:
+                #changes directory to new path
+                os.chdir(path[1])
+            except :
+                print("cd: no such file or directory: " + path[1])
     elif '>' in userInput:
         #redirection
         PID = os.fork()
