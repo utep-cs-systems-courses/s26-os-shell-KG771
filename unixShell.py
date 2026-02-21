@@ -46,7 +46,7 @@ while True:
                 print("cd: no such file or directory: " + path[1])
     
     elif '>' in userInput:
-        # split on '>' to get command and filename
+        #split on '>' to get command and filename
         parts = userInput.split('>')
         args = parts[0].strip().split()
         filename = parts[1].strip()
@@ -57,24 +57,24 @@ while True:
         else:
             PID = os.fork()
             if PID == 0:
-                # child process
+                #child 
                 fd = os.open(filename, os.O_WRONLY | os.O_CREAT | os.O_TRUNC, 0o644)
-                # 2. replace stdout (fd 1) with the file
+                #
                 os.dup2(fd, 1)
-                # 3. close the original file descriptor
+                #
                 os.close(fd)
-                # 4. exec the command
+                # 
                 os.execve(path, args, os.environ)
                 sys.exit(1)
             else:
-                # parent - same as simple command
+                #parent
                 _, status = os.wait()
                 exitCode = os.WEXITSTATUS(status)
                 if exitCode != 0:
                     print("Program terminated with exit code " + str(exitCode))
     
     elif '<' in userInput:
-        # split on '>' to get command and filename
+        #split on '>' to get command and filename
         parts = userInput.split('<')
         args = parts[0].strip().split()
         filename = parts[1].strip()
@@ -84,23 +84,24 @@ while True:
             print(args[0] + ": command not found")
         else:
             PID = os.fork()
+            #should handle case where pid < 0?
             if PID == 0:
-                # child process
+                #child
                 fd = os.open(filename, os.O_RDONLY)
                 #
                 os.dup2(fd, 0)
-                # 3. close the original file descriptor
+                #
                 os.close(fd)
-                # 4. exec the command
+                #
                 os.execve(path, args, os.environ)
                 sys.exit(1)
             else:
-                # parent - same as simple command
+                #parent
                 _, status = os.wait()
                 exitCode = os.WEXITSTATUS(status)
                 if exitCode != 0:
                     print("Program terminated with exit code " + str(exitCode))
-    #time pipes or manage pipes
+    #TA suggestion: time pipes or manage pipes
     elif '|' in userInput:
         parts = userInput.split('|')
         leftArgs = parts[0].strip().split()
@@ -116,31 +117,31 @@ while True:
         else:
             readEnd, writeEnd = os.pipe()
         
-            # first child runs left command
+            #first child runs left command
             PID1 = os.fork()
             if PID1 == 0:
-                os.close(readEnd)          # don't need read end
-                os.dup2(writeEnd, 1)        # replace stdout with write end
-                os.close(writeEnd)          # close original write end
+                os.close(readEnd)          
+                os.dup2(writeEnd, 1)        
+                os.close(writeEnd)          
                 os.execve(leftPath, leftArgs, os.environ)
                 sys.exit(1)
             
-            # second child runs right command
+            #second child runs right command
             PID2 = os.fork()
             if PID2 == 0:
-                os.close(writeEnd)          # don't need write end
-                os.dup2(readEnd, 0)        # replace stdin with read end
-                os.close(readEnd)          # close original read end
+                os.close(writeEnd)         
+                os.dup2(readEnd, 0)       
+                os.close(readEnd)          
                 os.execve(rightPath, rightArgs, os.environ)
                 sys.exit(1)
             
-            # parent
+            #parent
             os.close(readEnd)
             os.close(writeEnd)
             os.wait()
             os.wait()
     elif '&' in userInput:
-        # remove the & and parse the command
+        #
         args = userInput.replace('&', '').strip().split()
         path = findPath(args[0])
         
@@ -149,11 +150,11 @@ while True:
         else:
             PID = os.fork()
             if PID == 0:
-                # child - same as simple command
+                #
                 os.execve(path, args, os.environ)
                 sys.exit(1)
             else:
-                # parent - what's different here vs simple command?
+                #
                 pass
     else:
         #handle simple command
@@ -164,13 +165,13 @@ while True:
         else:
             PID = os.fork()
             if PID == 0:
-                # child process - execute the command
+                #
                 os.execve(path, args, os.environ)
                 sys.exit(1)
             else:
-                # parent process - wait for child
+                #
                 _, status = os.wait()
-                # if exit code non-zero, print the error message
+                #
                 exitCode = os.WEXITSTATUS(status)
                 if exitCode != 0:
                     print("Program terminated with exit code " + str(exitCode))
