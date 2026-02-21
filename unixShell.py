@@ -102,7 +102,8 @@ while True:
     elif '|' in userInput:
         #pipe
         parts = userInput.split('|')
-        args = parts[0].strip().split()
+        leftArgs = parts[0].strip().split()
+        rightArgs = parts[0].strip().split()
 
     else:
         #handle simple command
