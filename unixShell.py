@@ -101,7 +101,9 @@ while True:
     #time pipes or manage pipes
     elif '|' in userInput:
         #pipe
-        PID = os.fork()
+        parts = userInput.split('|')
+        args = parts[0].strip().split()
+
     else:
         #handle simple command
         args = userInput.split()
