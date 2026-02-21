@@ -135,7 +135,21 @@ while True:
             os.close(writeEnd)
             os.wait()
             os.wait()
-
+    elif '&' in userInput:
+        # remove the & and parse the command
+        args = userInput.replace('&', '').strip().split()
+        path = findPath(args[0])
+        
+        if path is None:
+            print(args[0] + ": command not found")
+        else:
+            PID = os.fork()
+            if PID == 0:
+                # child - same as simple command
+                os.execve(path, args, os.environ)
+            else:
+                # parent - what's different here vs simple command?
+                pass
     else:
         #handle simple command
         args = userInput.split()
