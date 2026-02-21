@@ -53,7 +53,7 @@ while True:
     
     elif '>' in userInput:
         #split on '>' to get command and filename
-        parts = userInput.split('>')
+        parts = userInput.split('>', 1)
         args = parts[0].strip().split()
         filename = parts[1].strip()
         
@@ -77,11 +77,11 @@ while True:
                 _, status = os.wait()
                 exitCode = os.WEXITSTATUS(status)
                 if exitCode != 0:
-                    print("Program terminated with exit code " + str(exitCode))
+                    print("Program terminated with exit code " + str(exitCode) + ".")
     
     elif '<' in userInput:
         #split on '>' to get command and filename
-        parts = userInput.split('<')
+        parts = userInput.split('<', 1)
         args = parts[0].strip().split()
         filename = parts[1].strip()
         
@@ -106,7 +106,7 @@ while True:
                 _, status = os.wait()
                 exitCode = os.WEXITSTATUS(status)
                 if exitCode != 0:
-                    print("Program terminated with exit code " + str(exitCode))
+                    print("Program terminated with exit code " + str(exitCode) + ".")
     #TA suggestion: time pipes or manage pipes
     elif '|' in userInput:
         parts = userInput.split('|')
@@ -145,7 +145,8 @@ while True:
             os.close(readEnd)
             os.close(writeEnd)
             os.wait()
-            os.wait()
+            print("Program terminated with exit code " + str(exitCode) + ".")
+
     elif userInput.split() and userInput.split()[-1] == '&':
         #
         args = userInput.replace('&', '').strip().split()
@@ -180,6 +181,6 @@ while True:
                 #
                 exitCode = os.WEXITSTATUS(status)
                 if exitCode != 0:
-                    print("Program terminated with exit code " + str(exitCode))
+                    print("Program terminated with exit code " + str(exitCode) + ".")
         
         
