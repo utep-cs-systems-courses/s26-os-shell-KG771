@@ -5,6 +5,16 @@ import sys
 import re
 
 
+def findPath(command):
+    if command.startswith('/'):
+        return command
+    paths = os.environ.get("PATH", "").split(":")
+    for directory in paths:
+        fullPath = os.path.join(directory, command)
+        if os.path.exists(fullPath):
+            return fullPath
+    return None
+
 
 while True:
     commandPrompt = os.environ.get("PS1", "$")
