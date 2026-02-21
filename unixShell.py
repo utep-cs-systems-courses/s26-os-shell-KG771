@@ -6,12 +6,18 @@ import re
 
 
 def findPath(command):
-    if command.startswith('/'):
-        return command
+    # if command includes a slash, treat it as a path (./x, ../x, /x)
+    if "/" in command:
+        if os.path.isfile(command) and os.access(command, os.X_OK):
+            return command
+        return None
+
     paths = os.environ.get("PATH", "").split(":")
     for directory in paths:
+        if directory == "":
+            directory = "."
         fullPath = os.path.join(directory, command)
-        if os.access(fullPath, os.X_OK):
+        if os.path.isfile(fullPath) and os.access(fullPath, os.X_OK):
             return fullPath
     return None
 
@@ -21,7 +27,7 @@ while True:
     try:
         userInput = input(commandPrompt).strip()
     except EOFError:
-        sys.exit(0)
+        os._exit(0)
 
     #handles case where user 'enters' without input
     if userInput == '':
@@ -29,7 +35,7 @@ while True:
 
     #handles built-in command exit
     if userInput == 'exit':
-        sys.exit(0)
+        os._exit(0)
     #handles built-in command cd
     elif userInput.startswith('cd'):
         #retrieves path
@@ -65,7 +71,7 @@ while True:
                 os.close(fd)
                 # 
                 os.execve(path, args, os.environ)
-                sys.exit(1)
+                os._exit(1)
             else:
                 #parent
                 _, status = os.wait()
@@ -94,7 +100,7 @@ while True:
                 os.close(fd)
                 #
                 os.execve(path, args, os.environ)
-                sys.exit(1)
+                os._exit(1)
             else:
                 #parent
                 _, status = os.wait()
@@ -124,7 +130,7 @@ while True:
                 os.dup2(writeEnd, 1)        
                 os.close(writeEnd)          
                 os.execve(leftPath, leftArgs, os.environ)
-                sys.exit(1)
+                os._exit(1)
             
             #second child runs right command
             PID2 = os.fork()
@@ -133,14 +139,14 @@ while True:
                 os.dup2(readEnd, 0)       
                 os.close(readEnd)          
                 os.execve(rightPath, rightArgs, os.environ)
-                sys.exit(1)
+                os._exit(1)
             
             #parent
             os.close(readEnd)
             os.close(writeEnd)
             os.wait()
             os.wait()
-    elif '&' in userInput:
+    elif userInput.split() and userInput.split()[-1] == '&':
         #
         args = userInput.replace('&', '').strip().split()
         path = findPath(args[0])
@@ -152,7 +158,7 @@ while True:
             if PID == 0:
                 #
                 os.execve(path, args, os.environ)
-                sys.exit(1)
+                os._exit(1)
             else:
                 #
                 pass
@@ -167,7 +173,7 @@ while True:
             if PID == 0:
                 #
                 os.execve(path, args, os.environ)
-                sys.exit(1)
+                os._exit(1)
             else:
                 #
                 _, status = os.wait()
