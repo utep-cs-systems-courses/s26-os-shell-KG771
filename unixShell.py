@@ -42,7 +42,7 @@ while True:
     elif '<' in userInput:
         #redirection
         PID = os.fork()
-    
+    #time pipes or manage pipes
     elif '|' in userInput:
         #pipe
         PID = os.fork()
