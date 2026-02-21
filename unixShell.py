@@ -70,7 +70,7 @@ while True:
                 #
                 os.close(fd)
                 # 
-                os.execve(path, args, os.environ)
+                os.execve(path, args, dict(os.environ))
                 os._exit(1)
             else:
                 #parent
@@ -99,7 +99,7 @@ while True:
                 #
                 os.close(fd)
                 #
-                os.execve(path, args, os.environ)
+                os.execve(path, args, dict(os.environ))
                 os._exit(1)
             else:
                 #parent
@@ -129,7 +129,7 @@ while True:
                 os.close(readEnd)          
                 os.dup2(writeEnd, 1)        
                 os.close(writeEnd)          
-                os.execve(leftPath, leftArgs, os.environ)
+                os.execve(leftPath, leftArgs, dict(os.environ))
                 os._exit(1)
             
             #second child runs right command
@@ -138,14 +138,14 @@ while True:
                 os.close(writeEnd)         
                 os.dup2(readEnd, 0)       
                 os.close(readEnd)          
-                os.execve(rightPath, rightArgs, os.environ)
+                os.execve(rightPath, rightArgs, dict(os.environ))
                 os._exit(1)
             
             #parent
             os.close(readEnd)
             os.close(writeEnd)
             os.wait()
-            print("Program terminated with exit code " + str(exitCode) + ".")
+            
 
     elif userInput.split() and userInput.split()[-1] == '&':
         #
@@ -158,7 +158,7 @@ while True:
             PID = os.fork()
             if PID == 0:
                 #
-                os.execve(path, args, os.environ)
+                os.execve(path, args, dict(os.environ))
                 os._exit(1)
             else:
                 #
@@ -173,7 +173,7 @@ while True:
             PID = os.fork()
             if PID == 0:
                 #
-                os.execve(path, args, os.environ)
+                os.execve(path, args, dict(os.environ))
                 os._exit(1)
             else:
                 #
