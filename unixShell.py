@@ -74,7 +74,7 @@ while True:
     
     elif '<' in userInput:
         # split on '>' to get command and filename
-        parts = userInput.split('>')
+        parts = userInput.split('<')
         args = parts[0].strip().split()
         filename = parts[1].strip()
         
@@ -87,7 +87,7 @@ while True:
                 # child process
                 fd = os.open(filename, os.O_RDONLY)
                 #
-                os.dup2(0, fd)
+                os.dup2(fd, 0)
                 # 3. close the original file descriptor
                 os.close(fd)
                 # 4. exec the command
