@@ -86,7 +86,7 @@ while True:
             if PID == 0:
                 # child process
                 fd = os.open(filename, os.O_RDONLY)
-                # 2. replace stdout (fd 1) with the file
+                #
                 os.dup2(0, fd)
                 # 3. close the original file descriptor
                 os.close(fd)
