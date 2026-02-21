@@ -73,8 +73,31 @@ while True:
                     print("Program terminated with exit code " + str(exitCode))
     
     elif '<' in userInput:
-        #redirection
-        PID = os.fork()
+        # split on '>' to get command and filename
+        parts = userInput.split('>')
+        args = parts[0].strip().split()
+        filename = parts[1].strip()
+        
+        path = findPath(args[0])
+        if path is None:
+            print(args[0] + ": command not found")
+        else:
+            PID = os.fork()
+            if PID == 0:
+                # child process
+                fd = os.open(filename, os.O_RDONLY)
+                # 2. replace stdout (fd 1) with the file
+                os.dup2(0, fd)
+                # 3. close the original file descriptor
+                os.close(fd)
+                # 4. exec the command
+                os.execve(path, args, os.environ)
+            else:
+                # parent - same as simple command
+                _, status = os.wait()
+                exitCode = os.WEXITSTATUS(status)
+                if exitCode != 0:
+                    print("Program terminated with exit code " + str(exitCode))
     #time pipes or manage pipes
     elif '|' in userInput:
         #pipe
