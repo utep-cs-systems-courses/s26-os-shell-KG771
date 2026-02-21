@@ -100,10 +100,33 @@ while True:
                     print("Program terminated with exit code " + str(exitCode))
     #time pipes or manage pipes
     elif '|' in userInput:
-        #pipe
         parts = userInput.split('|')
         leftArgs = parts[0].strip().split()
-        rightArgs = parts[0].strip().split()
+        rightArgs = parts[1].strip().split()
+
+        readEnd, writeEnd = os.pipe()
+    
+        # first child runs left command
+        PID1 = os.fork()
+        if PID1 == 0:
+            os.close(3)          # don't need read end
+            os.dup2(4, 1)        # replace stdout with write end
+            os.close(1)          # close original write end
+            os.execve(leftPath, leftArgs, os.environ)
+        
+        # second child runs right command
+        PID2 = os.fork()
+        if PID2 == 0:
+            os.close(4)          # don't need write end
+            os.dup2(3, 0)        # replace stdin with read end
+            os.close(0)          # close original read end
+            os.execve(rightPath, rightArgs, os.environ)
+        
+        # parent
+        os.close(readEnd)
+        os.close(writeEnd)
+        os.wait()
+        os.wait()
 
     else:
         #handle simple command
