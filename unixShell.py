@@ -11,7 +11,7 @@ def findPath(command):
     paths = os.environ.get("PATH", "").split(":")
     for directory in paths:
         fullPath = os.path.join(directory, command)
-        if os.path.exists(fullPath):
+        if os.access(fullPath, os.X_OK):
             return fullPath
     return None
 
@@ -41,7 +41,7 @@ while True:
             try:
                 #changes directory to new path
                 os.chdir(path[1])
-            except :
+            except FileNotFoundError:
                 #error message when path is invalid
                 print("cd: no such file or directory: " + path[1])
     
