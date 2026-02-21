@@ -17,7 +17,7 @@ def findPath(command):
 
 
 while True:
-    commandPrompt = os.environ.get("PS1", "$")
+    commandPrompt = os.environ.get("PS1", "$ ")
     try:
         userInput = input(commandPrompt).strip()
     except EOFError:
