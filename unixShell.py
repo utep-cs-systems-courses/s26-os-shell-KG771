@@ -109,16 +109,16 @@ while True:
         # first child runs left command
         PID1 = os.fork()
         if PID1 == 0:
-            os.close(3)          # don't need read end
-            os.dup2(4, 1)        # replace stdout with write end
+            os.close(readEnd)          # don't need read end
+            os.dup2(writeEnd, 1)        # replace stdout with write end
             os.close(1)          # close original write end
             os.execve(leftPath, leftArgs, os.environ)
         
         # second child runs right command
         PID2 = os.fork()
         if PID2 == 0:
-            os.close(4)          # don't need write end
-            os.dup2(3, 0)        # replace stdin with read end
+            os.close(writeEnd)          # don't need write end
+            os.dup2(readEnd, 0)        # replace stdin with read end
             os.close(0)          # close original read end
             os.execve(rightPath, rightArgs, os.environ)
         
