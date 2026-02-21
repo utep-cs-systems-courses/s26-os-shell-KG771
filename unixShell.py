@@ -104,29 +104,37 @@ while True:
         leftArgs = parts[0].strip().split()
         rightArgs = parts[1].strip().split()
 
-        readEnd, writeEnd = os.pipe()
-    
-        # first child runs left command
-        PID1 = os.fork()
-        if PID1 == 0:
-            os.close(readEnd)          # don't need read end
-            os.dup2(writeEnd, 1)        # replace stdout with write end
-            os.close(writeEnd)          # close original write end
-            os.execve(leftPath, leftArgs, os.environ)
+        leftPath = findPath(leftArgs[0])
+        rightPath = findPath(rightArgs[0])
+
+        if leftPath is None:
+            print(leftArgs[0] + ": command not found")
+        elif rightPath is None:
+            print(rightArgs[0] + ": command not found")
+        else:
+            readEnd, writeEnd = os.pipe()
         
-        # second child runs right command
-        PID2 = os.fork()
-        if PID2 == 0:
-            os.close(writeEnd)          # don't need write end
-            os.dup2(readEnd, 0)        # replace stdin with read end
-            os.close(readEnd)          # close original read end
-            os.execve(rightPath, rightArgs, os.environ)
-        
-        # parent
-        os.close(readEnd)
-        os.close(writeEnd)
-        os.wait()
-        os.wait()
+            # first child runs left command
+            PID1 = os.fork()
+            if PID1 == 0:
+                os.close(readEnd)          # don't need read end
+                os.dup2(writeEnd, 1)        # replace stdout with write end
+                os.close(writeEnd)          # close original write end
+                os.execve(leftPath, leftArgs, os.environ)
+            
+            # second child runs right command
+            PID2 = os.fork()
+            if PID2 == 0:
+                os.close(writeEnd)          # don't need write end
+                os.dup2(readEnd, 0)        # replace stdin with read end
+                os.close(readEnd)          # close original read end
+                os.execve(rightPath, rightArgs, os.environ)
+            
+            # parent
+            os.close(readEnd)
+            os.close(writeEnd)
+            os.wait()
+            os.wait()
 
     else:
         #handle simple command
