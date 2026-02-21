@@ -65,6 +65,7 @@ while True:
                 os.close(fd)
                 # 4. exec the command
                 os.execve(path, args, os.environ)
+                sys.exit(1)
             else:
                 # parent - same as simple command
                 _, status = os.wait()
@@ -92,6 +93,7 @@ while True:
                 os.close(fd)
                 # 4. exec the command
                 os.execve(path, args, os.environ)
+                sys.exit(1)
             else:
                 # parent - same as simple command
                 _, status = os.wait()
@@ -121,6 +123,7 @@ while True:
                 os.dup2(writeEnd, 1)        # replace stdout with write end
                 os.close(writeEnd)          # close original write end
                 os.execve(leftPath, leftArgs, os.environ)
+                sys.exit(1)
             
             # second child runs right command
             PID2 = os.fork()
@@ -129,6 +132,7 @@ while True:
                 os.dup2(readEnd, 0)        # replace stdin with read end
                 os.close(readEnd)          # close original read end
                 os.execve(rightPath, rightArgs, os.environ)
+                sys.exit(1)
             
             # parent
             os.close(readEnd)
@@ -147,6 +151,7 @@ while True:
             if PID == 0:
                 # child - same as simple command
                 os.execve(path, args, os.environ)
+                sys.exit(1)
             else:
                 # parent - what's different here vs simple command?
                 pass
@@ -161,6 +166,7 @@ while True:
             if PID == 0:
                 # child process - execute the command
                 os.execve(path, args, os.environ)
+                sys.exit(1)
             else:
                 # parent process - wait for child
                 _, status = os.wait()
