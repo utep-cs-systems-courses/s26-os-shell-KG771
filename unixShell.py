@@ -2,7 +2,7 @@
 
 import os
 import sys
-import re
+#import re
 
 
 def findPath(command):
@@ -34,9 +34,10 @@ while True:
         continue
 
     background = False
-    if userInput.endswith('&'):
+    tokens = userInput.split()
+    if tokens and tokens[-1] == '&':
         background = True
-        userInput = userInput[:-1].strip()
+        userInput = " ".join(tokens[:-1]).strip()
 
     #handles built-in command exit
     if userInput == 'exit':
