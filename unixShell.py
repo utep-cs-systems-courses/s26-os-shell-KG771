@@ -58,7 +58,7 @@ while True:
                 os.chdir(path[1])
             except FileNotFoundError:
                 #error message when path is invalid
-                print("cd: no such file or directory: " + path[1])
+                eprint("cd: no such file or directory: " + path[1])
     
     elif '>' in userInput:
         #split on '>' to get command and filename
@@ -68,7 +68,7 @@ while True:
         
         path = findPath(args[0])
         if path is None:
-            print(args[0] + ": command not found")
+            eprint(args[0] + ": command not found")
         else:
             PID = os.fork()
             if PID == 0:
@@ -147,8 +147,8 @@ while True:
                     os.dup2(writeEnd, 1)
                     os.close(writeEnd)
                     os.close(readEnd)
-                os.execve(path, args, os.environ)
-                sys.exit(1)
+                os.execve(path, args, dict(os.environ))
+                os._exit(1)
             else:
                 pids.append(PID)
                 if prevRead is not None:
