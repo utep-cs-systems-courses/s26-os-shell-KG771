@@ -30,7 +30,7 @@ while True:
     try:
         userInput = input(commandPrompt).strip()
     except EOFError:
-        os._exit(0)
+        sys.exit(0)
 
     #handles case where user 'enters' without input
     if userInput == '':
