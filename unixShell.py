@@ -126,6 +126,10 @@ while True:
 
         for i, cmdString in enumerate(parts):
             args = cmdString.strip().split()
+            if len(args) == 0:
+                eprint("shell: syntax error")
+                break
+
             path = findPath(args[0])
             
             if path is None:
@@ -157,13 +161,12 @@ while True:
                     os.close(writeEnd)
                     prevRead = readEnd
 
-        # wait for all children
+        if prevRead is not None:
+            os.close(prevRead)
+
         if not background:
             for pid in pids:
                 os.waitpid(pid, 0)
-
-        if prevRead is not None:
-            os.close(prevRead)
 
     else:
         #handle simple command
