@@ -146,6 +146,7 @@ while True:
                 if i < len(parts) - 1:
                     os.dup2(writeEnd, 1)
                     os.close(writeEnd)
+                    os.close(readEnd)
                 os.execve(path, args, os.environ)
                 sys.exit(1)
             else:
@@ -157,8 +158,12 @@ while True:
                     prevRead = readEnd
 
         # wait for all children
-        for pid in pids:
-            os.waitpid(pid, 0)
+        if not background:
+            for pid in pids:
+                os.waitpid(pid, 0)
+
+        if prevRead is not None:
+            os.close(prevRead)
 
     else:
         #handle simple command
