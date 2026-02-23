@@ -33,6 +33,11 @@ while True:
     if userInput == '':
         continue
 
+    background = False
+    if userInput.endswith('&'):
+        background = True
+        userInput = userInput[:-1].strip()
+
     #handles built-in command exit
     if userInput == 'exit':
         os._exit(0)
@@ -110,59 +115,45 @@ while True:
     #TA suggestion: time pipes or manage pipes
     elif '|' in userInput:
         parts = userInput.split('|')
-        leftArgs = parts[0].strip().split()
-        rightArgs = parts[1].strip().split()
+        prevRead = None
+        pids = []
 
-        leftPath = findPath(leftArgs[0])
-        rightPath = findPath(rightArgs[0])
+        for i, cmdString in enumerate(parts):
+            args = cmdString.strip().split()
+            path = findPath(args[0])
+            
+            if path is None:
+                print(args[0] + ": command not found")
+                break
 
-        if leftPath is None:
-            print(leftArgs[0] + ": command not found")
-        elif rightPath is None:
-            print(rightArgs[0] + ": command not found")
-        else:
-            readEnd, writeEnd = os.pipe()
-        
-            #first child runs left command
-            PID1 = os.fork()
-            if PID1 == 0:
-                os.close(readEnd)          
-                os.dup2(writeEnd, 1)        
-                os.close(writeEnd)          
-                os.execve(leftPath, leftArgs, dict(os.environ))
-                os._exit(1)
+            # create a pipe for every command except the last
+            if i < len(parts) - 1:
+                readEnd, writeEnd = os.pipe()
             
-            #second child runs right command
-            PID2 = os.fork()
-            if PID2 == 0:
-                os.close(writeEnd)         
-                os.dup2(readEnd, 0)       
-                os.close(readEnd)          
-                os.execve(rightPath, rightArgs, dict(os.environ))
-                os._exit(1)
-            
-            #parent
-            os.close(readEnd)
-            os.close(writeEnd)
-            os.wait()
-            
-
-    elif userInput.split() and userInput.split()[-1] == '&':
-        #
-        args = userInput.replace('&', '').strip().split()
-        path = findPath(args[0])
-        
-        if path is None:
-            print(args[0] + ": command not found")
-        else:
             PID = os.fork()
             if PID == 0:
-                #
-                os.execve(path, args, dict(os.environ))
-                os._exit(1)
+                # hook up stdin from previous pipe
+                if prevRead is not None:
+                    os.dup2(prevRead, 0)
+                    os.close(prevRead)
+                # hook up stdout to current pipe (not for last command)
+                if i < len(parts) - 1:
+                    os.dup2(writeEnd, 1)
+                    os.close(writeEnd)
+                os.execve(path, args, os.environ)
+                sys.exit(1)
             else:
-                #
-                pass
+                pids.append(PID)
+                if prevRead is not None:
+                    os.close(prevRead)
+                if i < len(parts) - 1:
+                    os.close(writeEnd)
+                    prevRead = readEnd
+
+        # wait for all children
+        for pid in pids:
+            os.waitpid(pid, 0)
+
     else:
         #handle simple command
         args = userInput.split()
