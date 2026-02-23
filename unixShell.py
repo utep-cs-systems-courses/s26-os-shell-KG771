@@ -79,10 +79,11 @@ while True:
                 os._exit(1)
             else:
                 #parent
-                _, status = os.wait()
-                exitCode = os.WEXITSTATUS(status)
-                if exitCode != 0:
-                    print("Program terminated with exit code " + str(exitCode) + ".")
+                if not background:
+                    _, status = os.waitpid(PID, 0)
+                    exitCode = os.WEXITSTATUS(status)
+                    if exitCode != 0:
+                        print("Program terminated with exit code " + str(exitCode) + ".")
     
     elif '<' in userInput:
         #split on '>' to get command and filename
@@ -108,10 +109,11 @@ while True:
                 os._exit(1)
             else:
                 #parent
-                _, status = os.wait()
-                exitCode = os.WEXITSTATUS(status)
-                if exitCode != 0:
-                    print("Program terminated with exit code " + str(exitCode) + ".")
+                if not background:
+                    _, status = os.waitpid(PID, 0)
+                    exitCode = os.WEXITSTATUS(status)
+                    if exitCode != 0:
+                        print("Program terminated with exit code " + str(exitCode) + ".")
     #TA suggestion: time pipes or manage pipes
     elif '|' in userInput:
         parts = userInput.split('|')
@@ -168,10 +170,10 @@ while True:
                 os._exit(1)
             else:
                 #
-                _, status = os.wait()
-                #
-                exitCode = os.WEXITSTATUS(status)
-                if exitCode != 0:
-                    print("Program terminated with exit code " + str(exitCode) + ".")
+                if not background:
+                    _, status = os.waitpid(PID, 0)
+                    exitCode = os.WEXITSTATUS(status)
+                    if exitCode != 0:
+                        print("Program terminated with exit code " + str(exitCode) + ".")
         
         
