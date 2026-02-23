@@ -171,9 +171,6 @@ while True:
                     os.close(writeEnd)
                     prevRead = readEnd
 
-        if prevRead is not None:
-            os.close(prevRead)
-
         if not background:
             for pid in pids:
                 os.waitpid(pid, 0)
