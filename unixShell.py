@@ -63,6 +63,11 @@ while True:
     elif '>' in userInput:
         #split on '>' to get command and filename
         parts = userInput.split('>', 1)
+
+        if len(parts) < 2 or parts[1].strip() == "":
+            eprint("shell: syntax error")
+            continue
+
         args = parts[0].strip().split()
         filename = parts[1].strip()
         
@@ -92,6 +97,11 @@ while True:
     elif '<' in userInput:
         #split on '>' to get command and filename
         parts = userInput.split('<', 1)
+
+        if len(parts) < 2 or parts[1].strip() == "":
+            eprint("shell: syntax error")
+            continue
+
         args = parts[0].strip().split()
         filename = parts[1].strip()
         
