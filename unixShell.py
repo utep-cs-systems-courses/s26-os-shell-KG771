@@ -21,6 +21,9 @@ def findPath(command):
             return fullPath
     return None
 
+def eprint(msg):
+    os.write(2, (msg + "\n").encode())
+
 
 while True:
     commandPrompt = os.environ.get("PS1", "$ ")
@@ -84,7 +87,7 @@ while True:
                     _, status = os.waitpid(PID, 0)
                     exitCode = os.WEXITSTATUS(status)
                     if exitCode != 0:
-                        print("Program terminated with exit code " + str(exitCode) + ".")
+                        eprint("Program terminated with exit code " + str(exitCode) + ".")
     
     elif '<' in userInput:
         #split on '>' to get command and filename
@@ -94,7 +97,7 @@ while True:
         
         path = findPath(args[0])
         if path is None:
-            print(args[0] + ": command not found")
+            eprint(args[0] + ": command not found")
         else:
             PID = os.fork()
             #should handle case where pid < 0?
@@ -114,7 +117,7 @@ while True:
                     _, status = os.waitpid(PID, 0)
                     exitCode = os.WEXITSTATUS(status)
                     if exitCode != 0:
-                        print("Program terminated with exit code " + str(exitCode) + ".")
+                        eprint("Program terminated with exit code " + str(exitCode) + ".")
     #TA suggestion: time pipes or manage pipes
     elif '|' in userInput:
         parts = userInput.split('|')
@@ -126,7 +129,7 @@ while True:
             path = findPath(args[0])
             
             if path is None:
-                print(args[0] + ": command not found")
+                eprint(args[0] + ": command not found")
                 break
 
             # create a pipe for every command except the last
@@ -162,7 +165,7 @@ while True:
         args = userInput.split()
         path = findPath(args[0])
         if path is None:
-            print(args[0] + ": command not found")
+            eprint(args[0] + ": command not found")
         else:
             PID = os.fork()
             if PID == 0:
@@ -175,6 +178,6 @@ while True:
                     _, status = os.waitpid(PID, 0)
                     exitCode = os.WEXITSTATUS(status)
                     if exitCode != 0:
-                        print("Program terminated with exit code " + str(exitCode) + ".")
+                        eprint("Program terminated with exit code " + str(exitCode) + ".")
         
         
