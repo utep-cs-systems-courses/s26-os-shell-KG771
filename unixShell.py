@@ -6,7 +6,7 @@ import sys
 
 
 def findPath(command):
-    # if command includes a slash, treat it as a path (./x, ../x, /x)
+    
     if "/" in command:
         if os.path.isfile(command) and os.access(command, os.X_OK):
             return command
