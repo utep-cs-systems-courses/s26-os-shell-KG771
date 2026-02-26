@@ -176,19 +176,19 @@ while True:
                 os.waitpid(pid, 0)
 
     else:
-        #handle simple command
+        #handle simple commands
         args = userInput.split()
         path = findPath(args[0])
         if path is None:
             eprint(args[0] + ": command not found")
         else:
             PID = os.fork()
+            #child
             if PID == 0:
-                #
                 os.execve(path, args, dict(os.environ))
                 os._exit(1)
             else:
-                #
+                #parent
                 if not background:
                     _, status = os.waitpid(PID, 0)
                     exitCode = os.WEXITSTATUS(status)
