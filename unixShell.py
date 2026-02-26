@@ -76,14 +76,14 @@ while True:
             eprint(args[0] + ": command not found")
         else:
             PID = os.fork()
+            #child 
             if PID == 0:
-                #child 
                 fd = os.open(filename, os.O_WRONLY | os.O_CREAT | os.O_TRUNC, 0o644)
-                #
+                
                 os.dup2(fd, 1)
-                #
+                
                 os.close(fd)
-                # 
+                 
                 os.execve(path, args, dict(os.environ))
                 os._exit(1)
             else:
@@ -114,11 +114,11 @@ while True:
             if PID == 0:
                 #child
                 fd = os.open(filename, os.O_RDONLY)
-                #
+                
                 os.dup2(fd, 0)
-                #
+                
                 os.close(fd)
-                #
+                
                 os.execve(path, args, dict(os.environ))
                 os._exit(1)
             else:
